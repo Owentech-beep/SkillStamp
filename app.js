@@ -301,8 +301,6 @@ function searchFromDashboard() {
 
 /* ---------- Recommendation engine ---------- */
 
-// Given the user's stamps, find the opportunity they're closest to matching
-// and recommend the specific challenge that would close the gap.
 function computeRecommendation(stamps) {
   const doneIds = new Set(stamps.map((s) => s.id));
 
@@ -311,7 +309,7 @@ function computeRecommendation(stamps) {
       opportunity: o,
       missing: o.matchSkills.filter((ms) => !doneIds.has(ms)),
     }))
-    .filter((c) => c.missing.length === 1) // one stamp away
+    .filter((c) => c.missing.length === 1)
     .sort((a, b) => a.missing.length - b.missing.length);
 
   if (candidates.length) {
@@ -326,7 +324,6 @@ function computeRecommendation(stamps) {
     }
   }
 
-  // Fallback: recommend the first uncompleted challenge.
   const nextUncompleted = challenges.find((ch) => !doneIds.has(ch.id));
   if (nextUncompleted) {
     return {
@@ -414,7 +411,6 @@ function initDashboard() {
   const search = document.getElementById("dashboardSearch");
   if (search) search.value = sessionStorage.getItem("skillstamp_search") || "";
 
-  // Render the computed recommendation.
   const recGrid = document.getElementById("recommendationGrid");
   if (recGrid) {
     const rec = computeRecommendation(stamps);
@@ -529,7 +525,6 @@ function evaluateChallenge(c, answer) {
     };
   }
 
-  // fallback keyword matching...
   const matchedKeywords = c.keywords.filter((k) => text.includes(k));
   const required = c.requiredMatches ?? 2;
   const pass = matchedKeywords.length >= required;
@@ -546,7 +541,6 @@ function evaluateChallenge(c, answer) {
   };
 }
 
-// Renders the dataset table (if present) as an HTML table.
 function renderDataset(dataset) {
   if (!dataset || !dataset.headers || !dataset.rows) return "";
   return `<div class="dataset-block">
@@ -618,7 +612,6 @@ function initChallenge() {
     panel.classList.remove("hidden");
     panel.setAttribute("tabindex", "-1");
 
-    // Build checklist feedback HTML if available
     let checklistHTML = "";
     if (result.checklistResults && result.checklistResults.length) {
       const items = result.checklistResults
@@ -690,7 +683,6 @@ function initChallenge() {
 
 /* ---------- Portfolio ---------- */
 
-// Demo stamps shown when portfolio.html?demo=1 is visited (for landing-page preview).
 const DEMO_STAMPS = [
   {
     id: "excel",
@@ -756,7 +748,6 @@ function initPortfolio() {
     totalEl.textContent = `${stamps.length} stamp${stamps.length === 1 ? "" : "s"}`;
   }
 
-  // Toggle the empty-state and, if demo mode, hide the "sign up" CTA.
   if (empty) empty.classList.toggle("hidden", stamps.length > 0);
 
   if (isDemo) {
@@ -764,7 +755,6 @@ function initPortfolio() {
     if (demoBadge) demoBadge.classList.remove("hidden");
   }
 
-  // Extra summary line: how many challenges earned "with evidence".
   const extra = document.getElementById("portfolioSummaryExtra");
   if (extra) {
     const withEvidence = stamps.filter(
@@ -911,9 +901,7 @@ function initProfile() {
   document.getElementById("profileName").value = user.name || "";
   document.getElementById("profileEmail").value = user.email || "";
   document.getElementById("profileLocation").value = user.location || "";
-  document.getElementById("profileSkills").value = (user.skills || []).join(
-    ", "
-  );
+  document.getElementById("profileSkills").value = (user.skills || []).join(", ");
   document.getElementById("profileAbout").value = user.about || "";
 
   const heading = document.getElementById("profileHeading");
@@ -929,7 +917,8 @@ function initProfile() {
       name: document.getElementById("profileName").value.trim(),
       email: document.getElementById("profileEmail").value.trim(),
       location: document.getElementById("profileLocation").value.trim(),
-      skills: document        .getElementById("profileSkills")
+      skills: document
+        .getElementById("profileSkills")
         .value.split(",")
         .map((s) => s.trim())
         .filter(Boolean),
