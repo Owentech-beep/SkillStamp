@@ -16,25 +16,53 @@ const challenges = [
     symbol: "X",
     symbolClass: "excel",
     description:
-      "Use a small sales dataset to demonstrate basic data analysis and attention to detail.",
-    learn: [
-      "Read and interpret simple data",
-      "Calculate a total and identify a highest value",
-      "Explain a result clearly",
+      "Analyse a realistic weekly sales table and turn the numbers into a clear recommendation.",
+    skillsDemonstrated: [
+      "Data interpretation",
+      "Basic calculations",
+      "Business insight",
     ],
+    learn: [
+      "Read and interpret a small data table",
+      "Calculate totals and averages accurately",
+      "Identify the strongest day and a simple trend",
+      "Write a practical recommendation for a shop owner",
+    ],
+    dataset: {
+      headers: ["Day", "Sales (R)"],
+      rows: [
+        ["Monday", 450],
+        ["Tuesday", 720],
+        ["Wednesday", 310],
+        ["Thursday", 900],
+        ["Friday", 620],
+        ["Saturday", 1150],
+        ["Sunday", 480],
+      ],
+    },
     instructions: [
-      "Imagine a small shop recorded these daily sales: R450, R720, R310, R900 and R620.",
-      "Calculate the total sales for all five days.",
-      "Identify the day value with the highest sales.",
-      "Write one sentence explaining what the shop owner should notice.",
+      "A spaza shop recorded these daily sales for one week (see table below).",
+      "Calculate the total sales for the full week.",
+      "Calculate the average daily sales (round to the nearest rand).",
+      "Identify the day with the highest sales.",
+      "Write 1–2 sentences recommending one practical action the owner could take based on the numbers.",
     ],
     placeholder:
-      "Write your total, highest sales value, and one-sentence observation...",
-    // Sum of 450 + 720 + 310 + 900 + 620 is 3000, not 2700.
-    keywords: ["3000", "r3000", "r3 000", "900", "highest"],
-    requiredMatches: 2,
+      "Example format:\nTotal: Rxxxx\nAverage: Rxxx\nHighest day: Saturday (Rxxxx)\nRecommendation: ...",
+    keywords: [
+      "4630", "r4630", "r4 630", "661", "r661", "saturday", "1150", "r1150",
+    ],
+    requiredMatches: 3,
+    checklist: [
+      { id: "total", label: "Correct weekly total", test: (t) => /4630|4\s*630/.test(t) },
+      { id: "average", label: "Reasonable average stated", test: (t) => /66[0-9]|average/.test(t) },
+      { id: "highest", label: "Identified Saturday as highest", test: (t) => /saturday/.test(t) },
+      { id: "insight", label: "Gave a practical recommendation", test: (t) => /recommend|suggest|should|could|stock|staff|promo|busy|weekend/.test(t) },
+    ],
+    modelAnswer:
+      "Total: R4 630. Average: about R661 per day. Highest day: Saturday (R1 150). Recommendation: The owner should ensure enough stock and staff on Saturdays, and consider a mid-week promotion to lift the quieter Wednesday and Sunday sales.",
     passMessage:
-      "You identified the expected total and highest sales value. Your sample SkillStamp has been added to your portfolio.",
+      "You correctly worked with the weekly sales data and offered a practical recommendation. Your SkillStamp (with evidence) has been added to your portfolio.",
   },
   {
     id: "web",
@@ -71,21 +99,45 @@ const challenges = [
     symbol: "✉",
     symbolClass: "communication",
     description:
-      "Write a clear, professional message to follow up on an internship application.",
+      "Write a clear, professional follow-up email after applying for an internship.",
+    skillsDemonstrated: [
+      "Professional tone",
+      "Clear purpose",
+      "Polite call-to-action",
+    ],
     learn: [
-      "Use a professional greeting",
-      "Communicate purpose clearly",
-      "Close politely",
+      "Use a professional greeting and closing",
+      "State the purpose of the email clearly",
+      "Ask a polite progress question",
+      "Keep the message concise and respectful",
     ],
+    scenario:
+      "You applied for a Digital Marketing Internship at GreenLeaf Retail in Polokwane one week ago. You have not received a reply yet. Write a short follow-up email to the hiring manager (Ms Nkosi).",
     instructions: [
-      "Write a short follow-up email about an internship application submitted one week ago.",
-      "Include a greeting, the reason for writing, a polite question about progress, and a professional closing.",
+      "Address the email to Ms Nkosi.",
+      "Mention the specific role and when you applied.",
+      "Politely ask whether there is any update on the application.",
+      "Offer to provide any further information if needed.",
+      "Close professionally with your name.",
     ],
-    placeholder: "Write your professional follow-up email...",
-    keywords: ["hello", "dear", "internship", "regards", "thank"],
-    requiredMatches: 2,
+    placeholder:
+      "Subject: Follow-up on Digital Marketing Internship application\n\nDear Ms Nkosi,\n\n...",
+    keywords: [
+      "dear", "ms nkosi", "internship", "digital marketing",
+      "applied", "week", "update", "regards", "thank",
+    ],
+    requiredMatches: 4,
+    checklist: [
+      { id: "greeting", label: "Professional greeting (Dear Ms Nkosi)", test: (t) => /dear\s+(ms\s+)?nkosi/.test(t) },
+      { id: "role", label: "Named the internship / role", test: (t) => /internship|digital marketing/.test(t) },
+      { id: "timing", label: "Mentioned when you applied", test: (t) => /week|applied|ago|last/.test(t) },
+      { id: "ask", label: "Polite request for an update", test: (t) => /update|status|progress|hear|any news/.test(t) },
+      { id: "close", label: "Professional closing", test: (t) => /regards|sincerely|kind regards|thank you/.test(t) },
+    ],
+    modelAnswer:
+      "Subject: Follow-up – Digital Marketing Internship application\n\nDear Ms Nkosi,\n\nI hope you are well. I applied for the Digital Marketing Internship at GreenLeaf Retail one week ago and wanted to politely follow up on the status of my application.\n\nI remain very interested in the opportunity and would be happy to provide any additional information if needed.\n\nThank you for your time. I look forward to hearing from you.\n\nKind regards,\n[Your Name]",
     passMessage:
-      "Your response includes key elements of a professional follow-up. Your sample SkillStamp has been added to your portfolio.",
+      "Your email includes the key elements of a professional follow-up. Your SkillStamp (with evidence) has been added to your portfolio.",
   },
   {
     id: "problem",
@@ -446,11 +498,38 @@ function evaluateChallenge(c, answer) {
       pass: false,
       score: 0,
       matched: 0,
-      total: c.keywords.length,
+      total: (c.checklist || c.keywords || []).length,
+      checklistResults: [],
       feedback: "Please enter an answer before submitting.",
     };
   }
 
+  if (c.checklist && c.checklist.length) {
+    const checklistResults = c.checklist.map((item) => ({
+      id: item.id,
+      label: item.label,
+      passed: item.test(text),
+    }));
+    const matched = checklistResults.filter((r) => r.passed).length;
+    const total = checklistResults.length;
+    const threshold = c.requiredMatches
+      ? Math.min(c.requiredMatches, total)
+      : Math.ceil(total * 0.7);
+    const pass = matched >= threshold;
+
+    return {
+      pass,
+      matched,
+      total,
+      score: Math.round((matched / total) * 100),
+      checklistResults,
+      feedback: pass
+        ? c.passMessage
+        : "Not quite yet. Review the checklist below, strengthen the missing parts, and try again. This is a simple demo evaluation — not a professional certification.",
+    };
+  }
+
+  // fallback keyword matching...
   const matchedKeywords = c.keywords.filter((k) => text.includes(k));
   const required = c.requiredMatches ?? 2;
   const pass = matchedKeywords.length >= required;
@@ -460,10 +539,28 @@ function evaluateChallenge(c, answer) {
     matched: matchedKeywords.length,
     total: c.keywords.length,
     score: pass ? 100 : Math.round((matchedKeywords.length / required) * 100),
+    checklistResults: [],
     feedback: pass
       ? c.passMessage
       : "Not quite yet. Review the instructions, add more detail and try again. This demo checks for selected keywords, so it is only a simple illustration—not a reliable assessment of skill.",
   };
+}
+
+// Renders the dataset table (if present) as an HTML table.
+function renderDataset(dataset) {
+  if (!dataset || !dataset.headers || !dataset.rows) return "";
+  return `<div class="dataset-block">
+    <h3>Dataset</h3>
+    <table class="dataset-table">
+      <thead><tr>${dataset.headers.map((h) => `<th>${escapeHTML(h)}</th>`).join("")}</tr></thead>
+      <tbody>${dataset.rows
+        .map(
+          (row) =>
+            `<tr>${row.map((cell) => `<td>${escapeHTML(cell)}</td>`).join("")}</tr>`
+        )
+        .join("")}</tbody>
+    </table>
+  </div>`;
 }
 
 function initChallenge() {
@@ -474,6 +571,16 @@ function initChallenge() {
   const c = challenges.find((x) => x.id === id) || challenges[0];
   const already = getStamps().some((s) => s.id === c.id);
 
+  const skillsHTML = c.skillsDemonstrated
+    ? `<h3>Skills demonstrated</h3><div class="card-meta">${c.skillsDemonstrated
+        .map((s) => `<span class="pill">${escapeHTML(s)}</span>`)
+        .join("")}</div>`
+    : "";
+
+  const scenarioHTML = c.scenario
+    ? `<div class="scenario"><h3>Scenario</h3><p>${escapeHTML(c.scenario)}</p></div>`
+    : "";
+
   holder.innerHTML = `<article class="card challenge-detail-card">
     <span class="category-label">${escapeHTML(c.category)} · ${escapeHTML(c.level)}</span>
     <h1>${escapeHTML(c.title)}</h1>
@@ -482,6 +589,9 @@ function initChallenge() {
       <span class="pill">${escapeHTML(c.duration)}</span>
       <span class="pill">Sample assessment</span>
     </div>
+    ${skillsHTML}
+    ${scenarioHTML}
+    ${renderDataset(c.dataset)}
     <div class="instructions">
       <h3>Your task</h3>
       <ol>${c.instructions.map((i) => `<li>${escapeHTML(i)}</li>`).join("")}</ol>
@@ -507,11 +617,33 @@ function initChallenge() {
 
     panel.classList.remove("hidden");
     panel.setAttribute("tabindex", "-1");
+
+    // Build checklist feedback HTML if available
+    let checklistHTML = "";
+    if (result.checklistResults && result.checklistResults.length) {
+      const items = result.checklistResults
+        .map(
+          (r) =>
+            `<li class="checklist-item ${r.passed ? "passed" : "failed"}">
+              <span class="checklist-icon" aria-hidden="true">${r.passed ? "✓" : "✗"}</span>
+              ${escapeHTML(r.label)}
+            </li>`
+        )
+        .join("");
+      checklistHTML = `<ul class="result-checklist">${items}</ul>`;
+    }
+
+    const modelAnswerHTML = result.pass && c.modelAnswer
+      ? `<details class="model-answer"><summary>See a model answer</summary><pre>${escapeHTML(c.modelAnswer)}</pre></details>`
+      : "";
+
     panel.innerHTML = `
       <h2>${result.pass ? "★ Challenge passed!" : "Keep practising"}</h2>
       <div class="result-score">${result.matched} of ${result.total} key ideas matched</div>
+      ${checklistHTML}
       <p>${escapeHTML(result.feedback)}</p>
-      <p class="form-note">This score is generated by simple demo keyword matching and does not certify real-world competence.</p>
+      ${modelAnswerHTML}
+      <p class="form-note">This score is generated by simple demo logic and does not certify real-world competence.</p>
       ${
         result.pass
           ? '<a class="btn" href="portfolio.html">View my SkillStamps</a>'
@@ -525,6 +657,8 @@ function initChallenge() {
 
       if (existing) {
         if (result.score > existing.score) existing.score = result.score;
+        existing.checklistResults = result.checklistResults;
+        existing.answer = answer;
       } else {
         stamps.push({
           id: c.id,
@@ -532,6 +666,8 @@ function initChallenge() {
           category: c.category,
           score: result.score,
           date: new Date().toISOString(),
+          checklistResults: result.checklistResults,
+          answer,
         });
       }
 
@@ -562,6 +698,14 @@ const DEMO_STAMPS = [
     category: "Digital",
     score: 100,
     date: new Date().toISOString(),
+    checklistResults: [
+      { id: "total", label: "Correct weekly total", passed: true },
+      { id: "average", label: "Reasonable average stated", passed: true },
+      { id: "highest", label: "Identified Saturday as highest", passed: true },
+      { id: "insight", label: "Gave a practical recommendation", passed: true },
+    ],
+    answer:
+      "Total: R4 630. Average: about R661 per day. Highest day: Saturday (R1 150). Recommendation: The owner should ensure enough stock and staff on Saturdays.",
   },
   {
     id: "communication",
@@ -569,6 +713,15 @@ const DEMO_STAMPS = [
     category: "Communication",
     score: 100,
     date: new Date().toISOString(),
+    checklistResults: [
+      { id: "greeting", label: "Professional greeting (Dear Ms Nkosi)", passed: true },
+      { id: "role", label: "Named the internship / role", passed: true },
+      { id: "timing", label: "Mentioned when you applied", passed: true },
+      { id: "ask", label: "Polite request for an update", passed: true },
+      { id: "close", label: "Professional closing", passed: true },
+    ],
+    answer:
+      "Dear Ms Nkosi, I applied for the Digital Marketing Internship one week ago and wanted to follow up on the status of my application. Thank you. Kind regards, [Your Name].",
   },
   {
     id: "web",
@@ -576,6 +729,8 @@ const DEMO_STAMPS = [
     category: "Digital",
     score: 100,
     date: new Date().toISOString(),
+    checklistResults: [],
+    answer: "HTML structures content. CSS styles it. JavaScript adds interactivity.",
   },
 ];
 
@@ -609,17 +764,44 @@ function initPortfolio() {
     if (demoBadge) demoBadge.classList.remove("hidden");
   }
 
+  // Extra summary line: how many challenges earned "with evidence".
+  const extra = document.getElementById("portfolioSummaryExtra");
+  if (extra) {
+    const withEvidence = stamps.filter(
+      (s) => Array.isArray(s.checklistResults) && s.checklistResults.length
+    ).length;
+    extra.innerHTML = withEvidence
+      ? `<p class="muted">${withEvidence} stamp${withEvidence === 1 ? "" : "s"} include checklist evidence.</p>`
+      : "";
+  }
+
   list.innerHTML = stamps
-    .map(
-      (s) => `<article class="card stamp-card-small">
+    .map((s) => {
+      const evidenceHTML =
+        Array.isArray(s.checklistResults) && s.checklistResults.length
+          ? `<ul class="stamp-evidence">${s.checklistResults
+              .map(
+                (r) =>
+                  `<li class="${r.passed ? "passed" : "failed"}"><span aria-hidden="true">${r.passed ? "✓" : "✗"}</span> ${escapeHTML(r.label)}</li>`
+              )
+              .join("")}</ul>`
+          : "";
+
+      const answerHTML = s.answer
+        ? `<details class="stamp-answer"><summary>View submitted answer</summary><pre>${escapeHTML(s.answer)}</pre></details>`
+        : "";
+
+      return `<article class="card stamp-card-small">
         <div class="stamp-badge" aria-hidden="true">★</div>
         <div>
           <span class="category-label">${escapeHTML(s.category)}</span>
           <h3>${escapeHTML(s.title)}</h3>
           <p>Demo score: ${Number(s.score) || 0}% · Earned ${new Date(s.date).toLocaleDateString()}</p>
+          ${evidenceHTML}
+          ${answerHTML}
         </div>
-      </article>`
-    )
+      </article>`;
+    })
     .join("");
 }
 
@@ -747,8 +929,7 @@ function initProfile() {
       name: document.getElementById("profileName").value.trim(),
       email: document.getElementById("profileEmail").value.trim(),
       location: document.getElementById("profileLocation").value.trim(),
-      skills: document
-        .getElementById("profileSkills")
+      skills: document        .getElementById("profileSkills")
         .value.split(",")
         .map((s) => s.trim())
         .filter(Boolean),
