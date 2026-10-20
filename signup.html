@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Create a SkillStamp demo account." />
+  <title>Sign up | SkillStamp</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="signup">
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <span class="brand-mark" aria-hidden="true">★</span> SkillStamp
+    </a>
+    <a class="back-link" href="index.html">← Home</a>
+  </header>
+
+  <main class="auth-wrap">
+    <section class="auth-card">
+      <div class="auth-logo">
+        <span class="brand-mark" aria-hidden="true">★</span>
+      </div>
+      <span class="eyebrow">YOUR NEXT STEP STARTS HERE</span>
+      <h1>Create your account</h1>
+      <p class="muted">Build a profile that shows what you can do.</p>
+
+      <form id="signupForm">
+        <label for="fullName">Full name</label>
+        <input id="fullName" type="text" placeholder="Your full name" required />
+
+        <label for="signupEmail">Email address</label>
+        <input id="signupEmail" type="email" placeholder="you@example.com" required />
+
+        <label for="signupPassword">Password</label>
+        <input
+          id="signupPassword"
+          type="password"
+          minlength="6"
+          placeholder="At least 6 characters"
+          required
+        />
+
+        <label for="userType">I am a...</label>
+        <select id="userType">
+          <option value="Job seeker">Job seeker</option>
+          <option value="Student">Student</option>
+          <option value="Career changer">Career changer</option>
+        </select>
+
+        <button class="btn full" type="submit">Create account</button>
+      </form>
+
+      <p class="form-note">
+        Demo mode: details are saved in this browser only. Firebase will be connected later.
+      </p>
+      <p class="auth-switch">Already registered? <a href="login.html">Log in</a></p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

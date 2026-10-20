@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Browse practical SkillStamp challenges." />
+  <title>Challenges | SkillStamp</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="challenges">
+  <header class="appbar">
+    <a class="brand" href="dashboard.html">
+      <span class="brand-mark" aria-hidden="true">★</span> SkillStamp
+    </a>
+    <div class="appbar-right">
+      <a class="avatar" href="profile.html" data-avatar aria-label="Open profile">·</a>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <aside class="sidebar">
+      <a class="side-link" href="dashboard.html">⌂ <span>Home</span></a>
+      <a class="side-link active" href="challenges.html">▣ <span>Challenges</span></a>
+      <a class="side-link" href="portfolio.html">★ <span>My SkillStamps</span></a>
+      <a class="side-link" href="opportunities.html">↗ <span>Opportunities</span></a>
+      <a class="side-link" href="profile.html">○ <span>Profile</span></a>
+    </aside>
+
+    <main class="dashboard-main">
+      <div class="page-heading">
+        <span class="eyebrow">LEARN BY DOING</span>
+        <h1>Practical challenges</h1>
+        <p class="muted">
+          Complete tasks to demonstrate your abilities and earn SkillStamps.
+        </p>
+      </div>
+
+      <div class="filter-row">
+        <input id="challengeSearch" placeholder="Search challenges..." aria-label="Search challenges" />
+        <select id="levelFilter" aria-label="Filter by difficulty">
+          <option value="all">All levels</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+        </select>
+        <select id="categoryFilter" aria-label="Filter by category">
+          <option value="all">All categories</option>
+          <option value="Digital">Digital</option>
+          <option value="Communication">Communication</option>
+          <option value="Problem Solving">Problem solving</option>
+        </select>
+      </div>
+
+      <div id="challengeList" class="grid two"></div>
+
+      <p class="form-note">
+        These are sample assessments for the SkillStamp prototype. Results are
+        not professional certifications.
+      </p>
+    </main>
+  </div>
+
+  <nav class="mobile-nav">
+    <a href="dashboard.html"><span aria-hidden="true">⌂</span><small>Home</small></a>
+    <a class="active" href="challenges.html"><span aria-hidden="true">▣</span><small>Challenges</small></a>
+    <a href="portfolio.html"><span aria-hidden="true">★</span><small>Stamps</small></a>
+    <a href="opportunities.html"><span aria-hidden="true">↗</span><small>Jobs</small></a>
+    <a href="profile.html"><span aria-hidden="true">○</span><small>Profile</small></a>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Complete a SkillStamp challenge." />
+  <title>Challenge | SkillStamp</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="challenge">
+  <header class="appbar">
+    <a class="brand" href="dashboard.html">
+      <span class="brand-mark" aria-hidden="true">★</span> SkillStamp
+    </a>
+    <a class="back-link" href="challenges.html">← All challenges</a>
+  </header>
+
+  <div class="app-layout">
+    <aside class="sidebar">
+      <a class="side-link" href="dashboard.html">⌂ <span>Home</span></a>
+      <a class="side-link active" href="challenges.html">▣ <span>Challenges</span></a>
+      <a class="side-link" href="portfolio.html">★ <span>My SkillStamps</span></a>
+      <a class="side-link" href="opportunities.html">↗ <span>Opportunities</span></a>
+      <a class="side-link" href="profile.html">○ <span>Profile</span></a>
+    </aside>
+
+    <main class="dashboard-main narrow-main">
+      <a class="text-link" href="challenges.html">← Back to challenges</a>
+      <div id="challengeDetail"></div>
+      <div id="resultPanel" class="result-panel hidden" aria-live="polite"></div>
+    </main>
+  </div>
+
+  <nav class="mobile-nav">
+    <a href="dashboard.html"><span aria-hidden="true">⌂</span><small>Home</small></a>
+    <a class="active" href="challenges.html"><span aria-hidden="true">▣</span><small>Challenges</small></a>
+    <a href="portfolio.html"><span aria-hidden="true">★</span><small>Stamps</small></a>
+    <a href="opportunities.html"><span aria-hidden="true">↗</span><small>Jobs</small></a>
+    <a href="profile.html"><span aria-hidden="true">○</span><small>Profile</small></a>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>

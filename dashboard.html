@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Your SkillStamp dashboard." />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#07865b" />
+  <title>Dashboard | SkillStamp</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="dashboard">
+  <header class="appbar">
+    <a class="brand" href="dashboard.html">
+      <span class="brand-mark" aria-hidden="true">★</span> SkillStamp
+    </a>
+    <div class="appbar-right">
+      <span class="demo-label">DEMO PROFILE</span>
+      <a class="avatar" href="profile.html" id="headerAvatar" data-avatar aria-label="Open profile">T</a>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <aside class="sidebar">
+      <a class="side-link active" href="dashboard.html">⌂ <span>Home</span></a>
+      <a class="side-link" href="challenges.html">▣ <span>Challenges</span></a>
+      <a class="side-link" href="portfolio.html">★ <span>My SkillStamps</span></a>
+      <a class="side-link" href="opportunities.html">↗ <span>Opportunities</span></a>
+      <a class="side-link" href="profile.html">○ <span>Profile</span></a>
+      <div class="sidebar-bottom">
+        <a href="index.html" class="side-link">← <span>Public website</span></a>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <div class="welcome-row">
+        <div>
+          <span class="eyebrow">YOUR SKILL JOURNEY</span>
+          <h1>Good to see you, <span id="welcomeName">there</span> 👋</h1>
+          <p class="muted">Every task is a chance to show what you're capable of.</p>
+        </div>
+        <a class="btn" href="challenges.html">Find a challenge</a>
+      </div>
+
+      <div class="stats-grid">
+        <article class="stat-card">
+          <span class="stat-icon" aria-hidden="true">▣</span>
+          <strong id="completedCount">0</strong>
+          <span>Tasks completed</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-icon" aria-hidden="true">★</span>
+          <strong id="stampCount">0</strong>
+          <span>SkillStamps earned</span>
+        </article>
+        <article class="stat-card">
+          <span class="stat-icon" aria-hidden="true">↗</span>
+          <strong id="opportunityCount">0</strong>
+          <span>Demo opportunities</span>
+        </article>
+      </div>
+
+      <div class="search-bar">
+        <span aria-hidden="true">⌕</span>
+        <input
+          id="dashboardSearch"
+          placeholder="Search challenges..."
+          aria-label="Search challenges"
+        />
+        <button class="btn btn-small" onclick="searchFromDashboard()">Search</button>
+      </div>
+
+      <div class="content-heading">
+        <div>
+          <h2>Quick access</h2>
+          <p class="muted">Pick up where you left off.</p>
+        </div>
+      </div>
+
+      <div class="grid four quick-grid">
+        <a class="card quick-card" href="challenges.html">
+          <span aria-hidden="true">▣</span>
+          <strong>Challenges</strong>
+          <small>Build your skills</small>
+        </a>
+        <a class="card quick-card" href="portfolio.html">
+          <span aria-hidden="true">★</span>
+          <strong>Portfolio</strong>
+          <small>View your stamps</small>
+        </a>
+        <a class="card quick-card" href="opportunities.html">
+          <span aria-hidden="true">↗</span>
+          <strong>Opportunities</strong>
+          <small>Explore next steps</small>
+        </a>
+        <a class="card quick-card" href="profile.html">
+          <span aria-hidden="true">○</span>
+          <strong>Profile</strong>
+          <small>Update your details</small>
+        </a>
+      </div>
+
+      <div class="content-heading">
+        <div>
+          <h2>Recommended for you</h2>
+          <p class="muted">Based on your current SkillStamps.</p>
+        </div>
+        <a href="challenges.html" class="text-link">View all →</a>
+      </div>
+
+      <div class="grid two" id="recommendationGrid"></div>
+    </main>
+  </div>
+
+  <nav class="mobile-nav">
+    <a class="active" href="dashboard.html">
+      <span aria-hidden="true">⌂</span><small>Home</small>
+    </a>
+    <a href="challenges.html">
+      <span aria-hidden="true">▣</span><small>Challenges</small>
+    </a>
+    <a href="portfolio.html">
+      <span aria-hidden="true">★</span><small>Stamps</small>
+    </a>
+    <a href="opportunities.html">
+      <span aria-hidden="true">↗</span><small>Jobs</small>
+    </a>
+    <a href="profile.html">
+      <span aria-hidden="true">○</span><small>Profile</small>
+    </a>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
