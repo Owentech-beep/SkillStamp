@@ -1411,3 +1411,33 @@ textarea:focus {
     font-size: 0.59rem;
   }
 }
+/* ---------- Enhanced challenge + portfolio evidence ---------- */
+.dataset-table-wrap { margin: 18px 0; overflow-x: auto; border-radius: 10px; border: 1px solid var(--line); }
+.dataset-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.dataset-table th, .dataset-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+.dataset-table th { background: #f0f5f8; font-weight: 700; color: var(--navy); }
+.dataset-table tr:last-child td { border-bottom: 0; }
+.scenario-box { margin: 18px 0; padding: 16px 18px; background: #f7fafc; border-left: 4px solid var(--green); border-radius: 0 10px 10px 0; }
+.scenario-box h3 { font-size: 0.95rem; margin-bottom: 6px; }
+.skills-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 4px; }
+.checklist-results, .stamp-checklist { list-style: none; margin: 12px 0; padding: 0; }
+.checklist-results li, .stamp-checklist li { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 0.9rem; }
+.checklist-results li.pass, .stamp-checklist li.pass { color: #08774f; }
+.checklist-results li.fail, .stamp-checklist li.fail { color: #8a97a6; }
+.model-answer, .stamp-evidence { margin-top: 14px; border: 1px solid var(--line); border-radius: 10px; background: #fafcfd; }
+.model-answer summary, .stamp-evidence summary { cursor: pointer; padding: 12px 14px; font-weight: 700; font-size: 0.88rem; color: var(--navy); }
+.model-answer pre, .stamp-evidence pre { margin: 0; padding: 0 14px 14px; white-space: pre-wrap; font-family: 'DM Sans', Arial, sans-serif; font-size: 0.88rem; line-height: 1.5; color: #3a4a5a; }
+.result-meta { font-size: 0.9rem; color: var(--muted); margin-bottom: 8px; }
+.portfolio-extra { margin-bottom: 22px; }
+.portfolio-progress { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+.progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.88rem; }
+.progress-bar { height: 8px; background: #e8eef3; border-radius: 20px; overflow: hidden; }
+.progress-bar span { display: block; height: 100%; background: var(--green); border-radius: 20px; transition: width 0.3s ease; }
+.skills-summary { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+.skills-summary h3 { font-size: 0.95rem; margin-bottom: 10px; }
+.share-mock { font-size: 0.82rem; color: var(--muted); padding: 8px 0; }
+.share-mock code { display: inline-block; margin-left: 6px; padding: 4px 8px; background: #eef3f7; border-radius: 6px; font-size: 0.8rem; color: var(--navy); }
+.stamp-card-evidence { display: flex; flex-direction: column; gap: 8px; }
+.stamp-header { display: flex; gap: 14px; align-items: flex-start; }
+.stamp-meta { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+.stamp-meta strong { color: var(--green); }
