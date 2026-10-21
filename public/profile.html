@@ -62,7 +62,54 @@
 
           <button class="btn full" type="submit">Save profile</button>
         </form>
+      </section>
 
+      <section class="card profile-card documents-card">
+        <h2 class="documents-heading">My documents</h2>
+        <p class="muted documents-intro">
+          Upload your CV and certificates so they sit next to your SkillStamps.
+          Files stay in this browser only (demo storage).
+        </p>
+
+        <div class="upload-row">
+          <div class="upload-box">
+            <label class="upload-label" for="cvUpload">
+              <span class="upload-icon" aria-hidden="true">📄</span>
+              <strong>CV / Résumé</strong>
+              <small>PDF, Word or image · max ~1.5 MB</small>
+            </label>
+            <input id="cvUpload" type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.webp" hidden />
+          </div>
+          <div class="upload-box">
+            <label class="upload-label" for="certUpload">
+              <span class="upload-icon" aria-hidden="true">📜</span>
+              <strong>Certificate</strong>
+              <small>PDF or image · max ~1.5 MB</small>
+            </label>
+            <input id="certUpload" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx" hidden />
+          </div>
+        </div>
+
+        <p id="documentUploadStatus" class="document-status hidden" role="status" aria-live="polite"></p>
+
+        <div class="document-toolbar">
+          <button type="button" id="downloadAllZip" class="btn btn-ghost btn-small hidden">
+            ↓ Download all as ZIP
+          </button>
+        </div>
+
+        <div id="documentList" class="document-list"></div>
+        <div id="documentEmpty" class="document-empty">
+          <p>No documents yet. Upload a CV or certificate to get started.</p>
+        </div>
+
+        <p class="form-note">
+          Prototype note: documents are stored locally in this browser and are
+          not uploaded to a server or verified.
+        </p>
+      </section>
+
+      <section class="card profile-card profile-danger-zone">
         <button class="btn btn-danger full logout-button" onclick="logoutDemo()">
           Log out of demo
         </button>

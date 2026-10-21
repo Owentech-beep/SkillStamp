@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify a SkillStamp</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="verify.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="dashboard.html">
+      <span class="brand-mark" aria-hidden="true">★</span>
+      SkillStamp
+    </a>
+    <a href="dashboard.html">Dashboard</a>
+  </header>
+
+  <main class="auth-wrap">
+    <section class="auth-card">
+      <span class="eyebrow">EMPLOYER VERIFICATION</span>
+      <h1>Verify a SkillStamp</h1>
+      <p class="muted">
+        Enter a credential ID to confirm its holder, assessment and score.
+      </p>
+
+      <p id="accessMessage" role="status">Checking your account...</p>
+
+      <form id="verifyForm" hidden>
+        <label for="credentialId">Credential ID</label>
+        <input
+          id="credentialId"
+          type="text"
+          placeholder="SS-..."
+          maxlength="100"
+          required
+        />
+        <button class="btn full" type="submit">
+          Verify credential
+        </button>
+      </form>
+
+      <section id="verificationResult" aria-live="polite"></section>
+
+      <p class="form-note">
+        Hackathon prototype: verification checks this server's temporary
+        records. These assessments are not professional certifications.
+      </p>
+    </section>
+  </main>
+</body>
+</html>
