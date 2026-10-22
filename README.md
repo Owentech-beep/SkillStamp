@@ -1,6 +1,6 @@
 # SkillStamp
 
-SkillStamp is a hackathon prototype that lets students complete practical
+SkillStamp is a hackathon prototype that lets students, employers, and jobseekers complete practical
 skills challenges, earn digital credentials and demonstrate their skills
 to employers.
 
