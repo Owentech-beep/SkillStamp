@@ -1,6 +1,6 @@
 # SkillStamp — Firebase edition
 
- SkillStamp is a hackathon application that helps students and jobseekers complete practical skills challenges, earn digital credentials, and demonstrate their skills to employers. The existing HTML/CSS interface is retained. Express handles grading, credential issuance, role checks, and application logic.823727a (Migrate SkillStamp authentication and data to Firebase)
+ SkillStamp is a hackathon application that helps students and jobseekers complete practical skills challenges, earn digital credentials, and demonstrate their skills to employers. The existing HTML/CSS interface is retained. Express handles grading, credential issuance, role checks, and application logic .
 
 ## Included scope
 
