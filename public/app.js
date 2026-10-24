@@ -1,22 +1,9 @@
+let firebaseClientPromise;
+function firebaseClient() {
+  return firebaseClientPromise ??= import('./firebase-client.js');
+}
 async function apiRequest(url, options = {}) {
-  const response = await fetch(url, {
-    ...options,
-    credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json",
-      ...options.headers,
-    },
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    const error = new Error(data.message || "Request failed.");
-    error.status = response.status;
-    throw error;
-  }
-
-  return data;
+  return (await firebaseClient()).apiRequest(url, options);
 }
 
 function showFormMessage(form, message) {
@@ -32,8 +19,8 @@ function showFormMessage(form, message) {
 
   notice.textContent = message;
 }
-// SkillStamp front-end prototype. Data is saved in this browser with localStorage.
-// This is not Firebase authentication or a secure credential-verification system.
+// Firebase Authentication and Express/Firestore power account data.
+// Document uploads remain local to this browser.
 
 const STORAGE = {
   user: "skillstamp_user",
@@ -89,10 +76,6 @@ function stampsKey() {
 
 function getStamps() {
   return serverPortfolio.stamps;
-}
-
-function saveStamps(stamps) {
-  localStorage.setItem(stampsKey(), JSON.stringify(stamps));
 }
 
 function documentsKey() {
@@ -330,68 +313,55 @@ function computeRecommendation(stamps) {
 function initLogin() {
   const form = document.getElementById("loginForm");
   if (!form) return;
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
     const button = form.querySelector('button[type="submit"]');
     button.disabled = true;
     showFormMessage(form, "Logging in...");
-
     try {
-      const data = await apiRequest("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({
-          email: document.getElementById("loginEmail").value.trim(),
-          password: document.getElementById("loginPassword").value,
-        }),
-      });
-
-      // Display cache only. The server session controls API access.
-      saveUser(data.user);
-      location.href = "dashboard.html";
-    } catch (err) {
-      showFormMessage(form, err.message);
-    } finally {
-      button.disabled = false;
-    }
+      const client = await firebaseClient();
+      await client.loginAccount(document.getElementById("loginEmail").value, document.getElementById("loginPassword").value);
+      const { user } = await apiRequest('/api/auth/me');
+      saveUser(user);
+      location.href = 'dashboard.html';
+    } catch (error) {
+      if (error.code === 'PROFILE_REQUIRED') { location.href = 'signup.html?complete=1'; return; }
+      showFormMessage(form, error.message);
+    } finally { button.disabled = false; }
+  });
+  document.getElementById('resetPasswordButton')?.addEventListener('click', async (event) => {
+    const email = document.getElementById('loginEmail');
+    if (!email.value || !email.reportValidity()) { showFormMessage(form, 'Enter your email address first.'); return; }
+    event.currentTarget.disabled = true;
+    try {
+      await (await firebaseClient()).resetPassword(email.value);
+      showFormMessage(form, 'If an account exists, a password-reset email will be sent. Check your inbox and spam folder.');
+    } catch (error) { showFormMessage(form, error.message); }
+    finally { document.getElementById('resetPasswordButton').disabled = false; }
   });
 }
-
 function initSignup() {
-  const form = document.getElementById("signupForm");
+  const form = document.getElementById('signupForm');
   if (!form) return;
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
+  if (new URLSearchParams(location.search).has('complete')) showFormMessage(form, 'Your Firebase account exists. Enter the same email and password, then complete your profile.');
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
     const button = form.querySelector('button[type="submit"]');
     button.disabled = true;
-    showFormMessage(form, "Creating your account...");
-
-    const type = document.getElementById("userType").value;
-
+    showFormMessage(form, 'Creating your account...');
     try {
-      const data = await apiRequest("/api/auth/register", {
-        method: "POST",
-        body: JSON.stringify({
-          name: document.getElementById("fullName").value.trim(),
-          email: document.getElementById("signupEmail").value.trim(),
-          password: document.getElementById("signupPassword").value,
-          type,
-          role: type === "Employer" ? "employer" : "student",
-        }),
-      });
-
-      saveUser(data.user);
-      location.href = "dashboard.html";
-    } catch (err) {
-      showFormMessage(form, err.message);
-    } finally {
-      button.disabled = false;
-    }
+      const name = document.getElementById('fullName').value.trim();
+      if (name.length < 2 || name.length > 100) throw new Error('Enter a name between 2 and 100 characters.');
+      const type = document.getElementById('userType').value;
+      await (await firebaseClient()).registerAccount(document.getElementById('signupEmail').value, document.getElementById('signupPassword').value);
+      const { user } = await apiRequest('/api/auth/register', { method: 'POST', body: JSON.stringify({ name, type, role: type === 'Employer' ? 'employer' : 'student' }) });
+      saveUser(user);
+      location.href = 'dashboard.html';
+    } catch (error) { showFormMessage(form, error.message); }
+    finally { button.disabled = false; }
   });
 }
+
 /* ---------- Shared avatar filler ---------- */
 
 function initAvatar() {
@@ -441,6 +411,7 @@ function initDashboard() {
   if (recGrid) {
     const rec = computeRecommendation(stamps);
     const c = rec.challenge;
+    if (!c) { recGrid.textContent = 'No challenges available.'; return; }
     recGrid.innerHTML = `<article class="card recommendation">
       <div class="challenge-symbol ${escapeHTML(c.symbolClass)}" aria-hidden="true">${escapeHTML(c.symbol)}</div>
       <div class="recommendation-body">
@@ -732,61 +703,6 @@ function initChallenge() {
 
 /* ---------- Challenge detail + evaluation ---------- */
 
-function evaluateChallenge(c, answer) {
-  const text = answer.toLowerCase().replace(/\s+/g, " ").trim();
-
-  if (!text) {
-    return {
-      pass: false,
-      score: 0,
-      matched: 0,
-      total: (c.checklist || c.keywords || []).length,
-      checklistResults: [],
-      feedback: "Please enter an answer before submitting.",
-    };
-  }
-
-  if (c.checklist && c.checklist.length) {
-    const checklistResults = c.checklist.map((item) => ({
-      id: item.id,
-      label: item.label,
-      passed: item.test(text),
-    }));
-    const matched = checklistResults.filter((r) => r.passed).length;
-    const total = checklistResults.length;
-    const threshold = c.requiredMatches
-      ? Math.min(c.requiredMatches, total)
-      : Math.ceil(total * 0.7);
-    const pass = matched >= threshold;
-
-    return {
-      pass,
-      matched,
-      total,
-      score: Math.round((matched / total) * 100),
-      checklistResults,
-      feedback: pass
-        ? c.passMessage
-        : "Not quite yet. Review the checklist below, strengthen the missing parts, and try again. This is a simple demo evaluation — not a professional certification.",
-    };
-  }
-
-  const matchedKeywords = c.keywords.filter((k) => text.includes(k));
-  const required = c.requiredMatches ?? 2;
-  const pass = matchedKeywords.length >= required;
-
-  return {
-    pass,
-    matched: matchedKeywords.length,
-    total: c.keywords.length,
-    score: pass ? 100 : Math.round((matchedKeywords.length / required) * 100),
-    checklistResults: [],
-    feedback: pass
-      ? c.passMessage
-      : "Not quite yet. Review the instructions, add more detail and try again. This demo checks for selected keywords, so it is only a simple illustration—not a reliable assessment of skill.",
-  };
-}
-
 function renderDataset(dataset) {
   if (!dataset || !dataset.headers || !dataset.rows) return "";
   return `<div class="dataset-block">
@@ -928,6 +844,20 @@ function initPortfolio() {
       </article>`;
     })
     .join("");
+  if (!isDemo && serverPortfolio.results.length) {
+    const history = document.createElement('section');
+    history.className = 'card';
+    const heading = document.createElement('h2');
+    heading.textContent = 'Assessment results';
+    history.appendChild(heading);
+    for (const attempt of serverPortfolio.results) {
+      const entry = document.createElement('p');
+      const title = challenges.find(c => c.id === attempt.challengeId)?.title || attempt.challengeId;
+      entry.textContent = `${title}: ${attempt.result.score}% — ${attempt.result.pass ? 'Passed' : 'Keep practising'} · ${new Date(attempt.submittedAt).toLocaleString()}`;
+      history.appendChild(entry);
+    }
+    list.appendChild(history);
+  }
 }
 
 /* ---------- Opportunities ---------- */
@@ -1019,7 +949,7 @@ function initOpportunities() {
                     ? `Submitted ${escapeHTML(
                         new Date(application.submittedAt).toLocaleString(),
                       )}`
-                    : "Demo listing. Applications are recorded locally on the server."
+                    : "Demo listing. Applications are saved to your account."
                 }
               </p>
             </article>
@@ -1288,6 +1218,7 @@ function initProfile() {
 
   document.getElementById("profileName").value = user.name || "";
   document.getElementById("profileEmail").value = user.email || "";
+  document.getElementById("profileEmail").readOnly = true;
   document.getElementById("profileLocation").value = user.location || "";
   document.getElementById("profileSkills").value = (user.skills || []).join(
     ", ",
@@ -1364,35 +1295,9 @@ function initProfile() {
 }
 
 async function logoutDemo() {
-  try {
-    await apiRequest("/api/auth/logout", {
-      method: "POST",
-    });
-
-    localStorage.removeItem(STORAGE.user);
-    location.href = "login.html";
-  } catch (err) {
-    alert(`Could not log out: ${err.message}`);
-  }
-}
-
-function resetDemo() {
-  if (
-    confirm(
-      "This will clear your demo profile, SkillStamps and uploaded documents. Continue?",
-    )
-  ) {
-    Object.keys(localStorage)
-      .filter(
-        (k) =>
-          k.startsWith(STORAGE.user) ||
-          k.startsWith(STORAGE.stamps) ||
-          k.startsWith(STORAGE.documents),
-      )
-      .forEach((k) => localStorage.removeItem(k));
-    sessionStorage.clear();
-    location.href = "index.html";
-  }
+  try { await (await firebaseClient()).logoutAccount(); }
+  catch (error) { alert(error.message); }
+  finally { localStorage.removeItem(STORAGE.user); location.href = 'login.html'; }
 }
 
 async function initDashboardUpdates() {
@@ -1478,6 +1383,9 @@ async function initDashboardUpdates() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const page = document.body.dataset.page;
+  document.querySelector('[data-action="toggleMenu"]')?.addEventListener('click', toggleMenu);
+  document.querySelector('[data-action="searchFromDashboard"]')?.addEventListener('click', searchFromDashboard);
+  document.querySelector('[data-action="logoutDemo"]')?.addEventListener('click', logoutDemo);
 
   const protectedPages = [
     "dashboard",
@@ -1525,6 +1433,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       await initDashboardUpdates();
     }
   } catch (err) {
+    if (err.code === 'PROFILE_REQUIRED') { location.replace('signup.html?complete=1'); return; }
     if (err.status === 401) {
       localStorage.removeItem(STORAGE.user);
       location.replace("login.html");

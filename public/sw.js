@@ -1,35 +1,7 @@
-const CACHE = "skillstamp-v1";
-const ASSETS = [
-  "./index.html",
-  "./login.html",
-  "./signup.html",
-  "./dashboard.html",
-  "./challenges.html",
-  "./challenge.html",
-  "./portfolio.html",
-  "./opportunities.html",
-  "./profile.html",
-  "./style.css",
-  "./app.js",
-  "./manifest.json",
-];
-
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)));
-  self.skipWaiting();
-});
-
-self.addEventListener("activate", (e) => {
-  e.waitUntil(
-    caches
-      .keys()
-      .then((keys) =>
-        Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-      )
-  );
-  self.clients.claim();
-});
-
-self.addEventListener("fetch", (e) => {
-  e.respondWith(caches.match(e.request).then((hit) => hit || fetch(e.request)));
-});
+self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', event => event.waitUntil((async () => {
+  const keys = await caches.keys();
+  await Promise.all(keys.filter(key => key.startsWith('skillstamp-')).map(key => caches.delete(key)));
+  await self.registration.unregister();
+  await self.clients.claim();
+})()));

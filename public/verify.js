@@ -3,20 +3,7 @@ const accessMessage = document.getElementById("accessMessage");
 const resultPanel = document.getElementById("verificationResult");
 
 async function verificationRequest(url) {
-  const response = await fetch(url, {
-    credentials: "same-origin",
-    cache: "no-store",
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    const error = new Error(data.message || "Verification failed.");
-    error.status = response.status;
-    throw error;
-  }
-
-  return data;
+  return (await import('./firebase-client.js')).apiRequest(url);
 }
 
 function showResultMessage(message) {

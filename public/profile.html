@@ -45,7 +45,8 @@
           <input id="profileName" required />
 
           <label for="profileEmail">Email address</label>
-          <input id="profileEmail" type="email" required />
+          <input id="profileEmail" type="email" readonly required />
+          <p class="form-note">Your sign-in email is managed by Firebase Authentication.</p>
 
           <label for="profileLocation">Location</label>
           <input id="profileLocation" placeholder="e.g. Polokwane, Limpopo" />
@@ -110,12 +111,10 @@
       </section>
 
       <section class="card profile-card profile-danger-zone">
-        <button class="btn btn-danger full logout-button" onclick="logoutDemo()">
+        <button class="btn btn-danger full logout-button" data-action="logoutDemo">
           Log out of demo
         </button>
-        <button class="btn btn-ghost full reset-button" onclick="resetDemo()">
-          Reset all demo data
-        </button>
+
       </section>
     </main>
   </div>
