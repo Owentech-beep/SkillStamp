@@ -1,12 +1,27 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from 'firebase/auth';
+import { initializeApp } from "firebase/app";
+
+import {
+  initializeAuth,
+  indexedDBLocalPersistence,
+  browserLocalPersistence,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  sendPasswordResetEmail,
+} from "firebase/auth";
+
 let ready;
 async function getClientAuth() {
   if (!ready) ready = (async () => {
     const response = await fetch('/api/firebase-config', { credentials: 'omit' });
     if (!response.ok) throw new Error('Could not load Firebase configuration.');
     const config = await response.json();
-    const auth = getAuth(initializeApp(config));
+    const auth = initializeAuth(initializeApp(config), {
+      persistence: [
+        indexedDBLocalPersistence,
+        browserLocalPersistence,
+      ],
+    });
     await auth.authStateReady();
     return auth;
   })().catch(error => { ready = undefined; throw error; });
