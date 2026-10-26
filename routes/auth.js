@@ -11,6 +11,7 @@ export function authMiddleware(firebaseAuth, db) {
       if (['auth/id-token-expired', 'auth/id-token-revoked', 'auth/invalid-id-token', 'auth/argument-error', 'auth/user-disabled', 'auth/user-not-found'].includes(error.code)) {
         throw fail(401, 'Your login has expired. Please log in again.');
       }
+      console.error("Firebase token verification failed:", error.code);
       throw fail(503, 'Unable to verify your login. Please try again.');
     }
     if (!req.identity.email) throw fail(403, 'An email account is required.');
