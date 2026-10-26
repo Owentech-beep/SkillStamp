@@ -1,6 +1,6 @@
 let firebaseClientPromise;
 function firebaseClient() {
-  return firebaseClientPromise ??= import('./firebase-client.js');
+  return (firebaseClientPromise ??= import("./firebase-client.js"));
 }
 async function apiRequest(url, options = {}) {
   return (await firebaseClient()).apiRequest(url, options);
@@ -320,45 +320,86 @@ function initLogin() {
     showFormMessage(form, "Logging in...");
     try {
       const client = await firebaseClient();
-      await client.loginAccount(document.getElementById("loginEmail").value, document.getElementById("loginPassword").value);
-      const { user } = await apiRequest('/api/auth/me');
+      await client.loginAccount(
+        document.getElementById("loginEmail").value,
+        document.getElementById("loginPassword").value,
+      );
+      const { user } = await apiRequest("/api/auth/me");
       saveUser(user);
-      location.href = 'dashboard.html';
+      location.href =
+        user.role === "employer" ? "employer.html" : "dashboard.html";
     } catch (error) {
-      if (error.code === 'PROFILE_REQUIRED') { location.href = 'signup.html?complete=1'; return; }
+      if (error.code === "PROFILE_REQUIRED") {
+        location.href = "signup.html?complete=1";
+        return;
+      }
       showFormMessage(form, error.message);
-    } finally { button.disabled = false; }
+    } finally {
+      button.disabled = false;
+    }
   });
-  document.getElementById('resetPasswordButton')?.addEventListener('click', async (event) => {
-    const email = document.getElementById('loginEmail');
-    if (!email.value || !email.reportValidity()) { showFormMessage(form, 'Enter your email address first.'); return; }
-    event.currentTarget.disabled = true;
-    try {
-      await (await firebaseClient()).resetPassword(email.value);
-      showFormMessage(form, 'If an account exists, a password-reset email will be sent. Check your inbox and spam folder.');
-    } catch (error) { showFormMessage(form, error.message); }
-    finally { document.getElementById('resetPasswordButton').disabled = false; }
-  });
+  document
+    .getElementById("resetPasswordButton")
+    ?.addEventListener("click", async (event) => {
+      const email = document.getElementById("loginEmail");
+      if (!email.value || !email.reportValidity()) {
+        showFormMessage(form, "Enter your email address first.");
+        return;
+      }
+      event.currentTarget.disabled = true;
+      try {
+        await (await firebaseClient()).resetPassword(email.value);
+        showFormMessage(
+          form,
+          "If an account exists, a password-reset email will be sent. Check your inbox and spam folder.",
+        );
+      } catch (error) {
+        showFormMessage(form, error.message);
+      } finally {
+        document.getElementById("resetPasswordButton").disabled = false;
+      }
+    });
 }
 function initSignup() {
-  const form = document.getElementById('signupForm');
+  const form = document.getElementById("signupForm");
   if (!form) return;
-  if (new URLSearchParams(location.search).has('complete')) showFormMessage(form, 'Your Firebase account exists. Enter the same email and password, then complete your profile.');
-  form.addEventListener('submit', async (event) => {
+  if (new URLSearchParams(location.search).has("complete"))
+    showFormMessage(
+      form,
+      "Your Firebase account exists. Enter the same email and password, then complete your profile.",
+    );
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const button = form.querySelector('button[type="submit"]');
     button.disabled = true;
-    showFormMessage(form, 'Creating your account...');
+    showFormMessage(form, "Creating your account...");
     try {
-      const name = document.getElementById('fullName').value.trim();
-      if (name.length < 2 || name.length > 100) throw new Error('Enter a name between 2 and 100 characters.');
-      const type = document.getElementById('userType').value;
-      await (await firebaseClient()).registerAccount(document.getElementById('signupEmail').value, document.getElementById('signupPassword').value);
-      const { user } = await apiRequest('/api/auth/register', { method: 'POST', body: JSON.stringify({ name, type, role: type === 'Employer' ? 'employer' : 'student' }) });
+      const name = document.getElementById("fullName").value.trim();
+      if (name.length < 2 || name.length > 100)
+        throw new Error("Enter a name between 2 and 100 characters.");
+      const type = document.getElementById("userType").value;
+      await (
+        await firebaseClient()
+      ).registerAccount(
+        document.getElementById("signupEmail").value,
+        document.getElementById("signupPassword").value,
+      );
+      const { user } = await apiRequest("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          type,
+          role: type === "Employer" ? "employer" : "student",
+        }),
+      });
       saveUser(user);
-      location.href = 'dashboard.html';
-    } catch (error) { showFormMessage(form, error.message); }
-    finally { button.disabled = false; }
+      location.href =
+        user.role === "employer" ? "employer.html" : "dashboard.html";
+    } catch (error) {
+      showFormMessage(form, error.message);
+    } finally {
+      button.disabled = false;
+    }
   });
 }
 
@@ -411,7 +452,10 @@ function initDashboard() {
   if (recGrid) {
     const rec = computeRecommendation(stamps);
     const c = rec.challenge;
-    if (!c) { recGrid.textContent = 'No challenges available.'; return; }
+    if (!c) {
+      recGrid.textContent = "No challenges available.";
+      return;
+    }
     recGrid.innerHTML = `<article class="card recommendation">
       <div class="challenge-symbol ${escapeHTML(c.symbolClass)}" aria-hidden="true">${escapeHTML(c.symbol)}</div>
       <div class="recommendation-body">
@@ -845,15 +889,17 @@ function initPortfolio() {
     })
     .join("");
   if (!isDemo && serverPortfolio.results.length) {
-    const history = document.createElement('section');
-    history.className = 'card';
-    const heading = document.createElement('h2');
-    heading.textContent = 'Assessment results';
+    const history = document.createElement("section");
+    history.className = "card";
+    const heading = document.createElement("h2");
+    heading.textContent = "Assessment results";
     history.appendChild(heading);
     for (const attempt of serverPortfolio.results) {
-      const entry = document.createElement('p');
-      const title = challenges.find(c => c.id === attempt.challengeId)?.title || attempt.challengeId;
-      entry.textContent = `${title}: ${attempt.result.score}% — ${attempt.result.pass ? 'Passed' : 'Keep practising'} · ${new Date(attempt.submittedAt).toLocaleString()}`;
+      const entry = document.createElement("p");
+      const title =
+        challenges.find((c) => c.id === attempt.challengeId)?.title ||
+        attempt.challengeId;
+      entry.textContent = `${title}: ${attempt.result.score}% — ${attempt.result.pass ? "Passed" : "Keep practising"} · ${new Date(attempt.submittedAt).toLocaleString()}`;
       history.appendChild(entry);
     }
     list.appendChild(history);
@@ -1295,9 +1341,14 @@ function initProfile() {
 }
 
 async function logoutDemo() {
-  try { await (await firebaseClient()).logoutAccount(); }
-  catch (error) { alert(error.message); }
-  finally { localStorage.removeItem(STORAGE.user); location.href = 'login.html'; }
+  try {
+    await (await firebaseClient()).logoutAccount();
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    localStorage.removeItem(STORAGE.user);
+    location.href = "login.html";
+  }
 }
 
 async function initDashboardUpdates() {
@@ -1383,9 +1434,15 @@ async function initDashboardUpdates() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const page = document.body.dataset.page;
-  document.querySelector('[data-action="toggleMenu"]')?.addEventListener('click', toggleMenu);
-  document.querySelector('[data-action="searchFromDashboard"]')?.addEventListener('click', searchFromDashboard);
-  document.querySelector('[data-action="logoutDemo"]')?.addEventListener('click', logoutDemo);
+  document
+    .querySelector('[data-action="toggleMenu"]')
+    ?.addEventListener("click", toggleMenu);
+  document
+    .querySelector('[data-action="searchFromDashboard"]')
+    ?.addEventListener("click", searchFromDashboard);
+  document
+    .querySelector('[data-action="logoutDemo"]')
+    ?.addEventListener("click", logoutDemo);
 
   const protectedPages = [
     "dashboard",
@@ -1400,6 +1457,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (protectedPages.includes(page)) {
       const { user } = await apiRequest("/api/auth/me");
       saveUser(user);
+
+      // Send employers away from student dashboard and assessment pages.
+      const studentPages = [
+        "dashboard",
+        "challenges",
+        "challenge",
+        "portfolio",
+      ];
+
+      if (user.role === "employer" && studentPages.includes(page)) {
+        location.replace("employer.html");
+        return;
+      }
+
+      // Keep shared pages connected to the employer dashboard.
+      if (user.role === "employer") {
+        document
+          .querySelectorAll('a[href="dashboard.html"]')
+          .forEach((link) => {
+            link.href = "employer.html";
+          });
+
+        document
+          .querySelectorAll(
+            '.sidebar a[href="challenges.html"], .sidebar a[href="portfolio.html"]',
+          )
+          .forEach((link) => link.remove());
+      }
 
       const challengeData = await apiRequest("/api/challenges");
       challenges = challengeData.challenges;
@@ -1433,7 +1518,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       await initDashboardUpdates();
     }
   } catch (err) {
-    if (err.code === 'PROFILE_REQUIRED') { location.replace('signup.html?complete=1'); return; }
+    if (err.code === "PROFILE_REQUIRED") {
+      location.replace("signup.html?complete=1");
+      return;
+    }
     if (err.status === 401) {
       localStorage.removeItem(STORAGE.user);
       location.replace("login.html");

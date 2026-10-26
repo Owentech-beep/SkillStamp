@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employer Dashboard | SkillStamp</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="verify.js" defer></script>
+</head>
+<body>
+  <header class="appbar">
+    <a class="brand" href="employer.html">
+      <span class="brand-mark" aria-hidden="true">★</span>
+      SkillStamp
+    </a>
+
+    <div class="appbar-right">
+      <span class="demo-label">EMPLOYER</span>
+      <a class="btn btn-small" href="profile.html">My profile</a>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <aside class="sidebar">
+      <a class="side-link active" href="employer.html">
+        Employer dashboard
+      </a>
+      <a class="side-link" href="profile.html">Profile</a>
+      <a class="side-link" href="opportunities.html">
+        Demo opportunities
+      </a>
+
+      <div class="sidebar-bottom">
+        <a class="side-link" href="index.html">Public website</a>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <div class="welcome-row">
+        <div>
+          <span class="eyebrow">EMPLOYER DASHBOARD</span>
+          <h1>Verify practical skills</h1>
+          <p class="muted">
+            Check a candidate’s SkillStamp against its saved credential record.
+          </p>
+        </div>
+      </div>
+
+      <section class="card">
+        <h2>Verify a SkillStamp</h2>
+        <p>
+          Ask the candidate for the credential ID shown in their portfolio,
+          then enter it below.
+        </p>
+
+        <p id="accessMessage" role="status">
+          Checking your account...
+        </p>
+
+        <form id="verifyForm" hidden>
+          <label for="credentialId">Credential ID</label>
+          <input
+            id="credentialId"
+            type="text"
+            placeholder="SS-..."
+            maxlength="100"
+            autocomplete="off"
+            required
+          />
+
+          <button class="btn" type="submit">
+            Verify credential
+          </button>
+        </form>
+
+        <section
+          id="verificationResult"
+          aria-live="polite"
+          aria-atomic="true"
+        ></section>
+      </section>
+
+      <section class="card">
+        <h2>Understanding the result</h2>
+        <p>
+          A matching record shows the credential holder, challenge,
+          assessment score and issue date.
+        </p>
+        <p class="muted">
+          Verification confirms that SkillStamp issued the credential.
+          It does not independently verify the holder’s identity.
+          These demo assessments are not professional certifications.
+        </p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
